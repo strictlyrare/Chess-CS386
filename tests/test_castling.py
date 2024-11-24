@@ -86,25 +86,19 @@ class TestCastling(unittest.TestCase):
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
             time.sleep(1.0)  # Allow engine to process
+    
+            # Validate selection
             print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
-    
-            # Debug highlights format
-            if highlights:
-                print(f"DEBUG: Highlighted moves: {highlights}")
-            else:
-                print("ERROR: No valid highlights returned.")
-    
-            # Validate the selection
-            if isinstance(highlights, list) and not any(end == tuple(h) for h in highlights):
+            if not highlights or highlights[end[0]][end[1]] != "1":
                 self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
     
             # Move the piece
             print(f"DEBUG: Attempting to move piece to {end}.")
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
-            time.sleep(0.5)  # Allow engine to process
-            print(f"DEBUG: Board after moving piece to {end}:\n{board}")
+            time.sleep(1.0)  # Allow engine to process
     
-            # Validate the movement
+            # Validate movement
+            print(f"DEBUG: Board after moving piece to {end}:\n{board}")
             if board[end[0]][end[1]] == "X":
                 self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
     
