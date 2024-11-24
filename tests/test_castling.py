@@ -34,8 +34,8 @@ class TestCastling(unittest.TestCase):
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
             time.sleep(0.5)  # Allow engine to process
             
-            # Retrieve the latest outputs
-            game_condition, board, sides, highlights = self.engine.get_output()
+            # Fetch the updated output after selection
+            game_condition, board, sides, highlights = self.engine._get_output(24, include_condition=True)
             print(f"DEBUG: Updated board state after selecting piece at {start}:\n{board}")
             print(f"DEBUG: Updated highlights after selecting piece at {start}:\n{highlights}")
     
@@ -48,8 +48,8 @@ class TestCastling(unittest.TestCase):
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
             time.sleep(0.5)  # Allow engine to process
             
-            # Retrieve the latest outputs
-            game_condition, board, sides, highlights = self.engine.get_output()
+            # Fetch the updated output after movement
+            game_condition, board, sides, highlights = self.engine._get_output(24, include_condition=True)
             print(f"DEBUG: Updated board state after moving piece to {end}:\n{board}")
             
             # Validate movement
