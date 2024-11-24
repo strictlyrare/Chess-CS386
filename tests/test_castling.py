@@ -51,9 +51,11 @@ class TestCastling(unittest.TestCase):
     
             # Validate selection
             if not highlights or highlights[end[0]][end[1]] != "1":
-                print(f"DEBUG: For target end position (row={end[0]}, col={end[1]}), "
-                      f"highlights[{end[0]}][{end[1]}] = {highlights[end[0]][end[1]] if highlights else 'No highlights'} "
-                      f"(Expected '1'). Full highlights: {highlights}")
+                print(f"DEBUG: Highlights array dimensions: {len(highlights)}x{len(highlights[0]) if highlights else 0}")
+                print(f"DEBUG: Highlights array at failure point:\n{highlights}")
+                print(f"DEBUG: Expected value '1' at Highlights[{end[0]}][{end[1]}], but found: "
+                      f"'{highlights[end[0]][end[1]] if highlights else 'No highlights'}'.")
+                print(f"DEBUG: Raw highlights_rows received from C:\n{highlights_rows}")
                 self.fail(f"Failed to select piece at {start_str}: target {end_str} not in valid highlights.")
     
             # Move the piece
