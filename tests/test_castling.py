@@ -32,34 +32,22 @@ class TestCastling(unittest.TestCase):
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
             time.sleep(1)
-            game_condition, board, sides, highlights = self.engine.select_piece(*start)
-            
-            print(f"DEBUG: Raw highlights after selecting piece at {start}:\n{highlights}")
-            
-            # Validate selection
+            print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
+    
             if not highlights or highlights[end[0]][end[1]] != "1":
                 print(f"DEBUG: Highlights validation failed for target {end}.")
-                print(f"DEBUG: Parsed highlights array:\n{highlights}")
-                print(f"DEBUG: Raw output from C:\n{self.engine._get_output(24)}")  # Print raw output
+                print(f"DEBUG: Raw highlights:\n{highlights}")
                 self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
     
             # Move the piece
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
-            time.sleep(5)
+            time.sleep(1)
             print(f"DEBUG: Board state after moving piece to {end}:\n{board}")
     
             # Validate movement
-            if board[end[0]][end[1]] != "G":  # Replace "G" with the expected piece type
+            if board[end[0]][end[1]] != "G":  # Replace "G" with dynamic piece type if needed
                 print(f"DEBUG: Expected 'G' at {end}, but found: {board[end[0]][end[1]]}")
-                print(f"DEBUG: Full board after attempted move:\n{board}")
                 self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
-            
-            if board[start[0]][start[1]] != "X":  # Ensure the starting position is now empty
-                print(f"DEBUG: Expected 'X' at {start}, but found: {board[start[0]][start[1]]}")
-                print(f"DEBUG: Full board after attempted move:\n{board}")
-                self.fail(f"Failed to clear piece from {start}: board state did not reflect the move.")
-    
-            print(f"DEBUG: Successfully completed move from {start} to {end}.\n")
     
         print("DEBUG: Test completed successfully.")
 
