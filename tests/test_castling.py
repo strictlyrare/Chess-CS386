@@ -13,7 +13,7 @@ class TestCastling(unittest.TestCase):
 
     def test_castling_queenside(self):
         print("DEBUG: Running test_castling_queenside...")
-    
+        
         moves = [
             ((7, 1), (5, 0)),  # Move white knight b1 -> a3
             ((1, 1), (2, 1)),  # Move black pawn b7 -> b6
@@ -31,23 +31,18 @@ class TestCastling(unittest.TestCase):
     
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
-    
-            print(f"DEBUG: Highlights received after selecting piece at {start}:")
-            print(highlights)
-    
+            print(f"DEBUG: Raw highlights after selecting piece at {start}:\n{highlights}")
+            
             # Validate selection
             if not highlights or highlights[end[0]][end[1]] != "1":
-                print(f"DEBUG: Highlights array dimensions: {len(highlights)}x{len(highlights[0]) if highlights else 0}")
-                print(f"DEBUG: Highlights array at failure point:\n{highlights}")
-                print(f"DEBUG: Expected value '1' at Highlights[{end[0]}][{end[1]}], but found: "
-                      f"'{highlights[end[0]][end[1]] if highlights else 'No highlights'}'.")
+                print(f"DEBUG: Highlights validation failed for target {end}.")
+                print(f"DEBUG: Parsed highlights array:\n{highlights}")
+                print(f"DEBUG: Raw output from C:\n{self.engine._get_output(24)}")  # Print raw output
                 self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
     
             # Move the piece
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
-    
-            print(f"DEBUG: Board state after moving piece to {end}:")
-            print(board)
+            print(f"DEBUG: Board state after moving piece to {end}:\n{board}")
     
             # Validate movement
             if board[end[0]][end[1]] == "X":
