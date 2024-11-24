@@ -32,6 +32,7 @@ class TestCastling(unittest.TestCase):
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
             time.sleep(0.5)
+            game_condition, board, sides, highlights = self.engine.select_piece(*start)
             print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
 
             if not highlights or highlights[end[0]][end[1]] != "1":
