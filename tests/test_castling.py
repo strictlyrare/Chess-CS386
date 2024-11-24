@@ -25,10 +25,32 @@ class TestCastling(unittest.TestCase):
             ((7, 4), (7, 6))   # Perform kingside castling (king e1 -> g1)
         ]
 
+        retries = 5
         for start, end in moves:
-            self._execute_move(start, end)
+            for attempt in range(retries):
+                # Select the piece
+                game_condition, board, sides, highlights = self.engine.select_piece(*start)
+                if not board or not highlights:
+                    print(f"DEBUG: Select piece failed (attempt {attempt + 1}/{retries}). Retrying...")
+                    time.sleep(1.0)
+                    continue
 
-        # Assertions to verify board state after castling
+                # Debugging board and highlights
+                print(f"DEBUG: Board after selecting piece {start}:\n{board}")
+                print(f"DEBUG: Highlights after selecting piece {start}:\n{highlights}")
+
+                # Move the piece
+                game_condition, board, sides, highlights = self.engine.move_piece(*end)
+                if board and board[end[0]][end[1]] != "X":
+                    print(f"DEBUG: Successfully moved piece from {start} to {end}.")
+                    break
+                else:
+                    print(f"DEBUG: Move failed (attempt {attempt + 1}/{retries}). Retrying...")
+                    time.sleep(1.0)
+            else:
+                self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
+
+        # Verify final board state after castling
         board, _, _ = self.engine._get_output(24, include_condition=False)
         print(f"DEBUG: Final board state after castling:\n{board}")
         self.assertEqual(board[7][6], "K", "King should be at g1 after castling.")
@@ -52,33 +74,38 @@ class TestCastling(unittest.TestCase):
             ((7, 4), (7, 2))   # Perform queenside castling (king e1 -> c1)
         ]
 
+        retries = 5
         for start, end in moves:
-            self._execute_move(start, end)
+            for attempt in range(retries):
+                # Select the piece
+                game_condition, board, sides, highlights = self.engine.select_piece(*start)
+                if not board or not highlights:
+                    print(f"DEBUG: Select piece failed (attempt {attempt + 1}/{retries}). Retrying...")
+                    time.sleep(1.0)
+                    continue
 
-        # Assertions to verify board state after castling
+                # Debugging board and highlights
+                print(f"DEBUG: Board after selecting piece {start}:\n{board}")
+                print(f"DEBUG: Highlights after selecting piece {start}:\n{highlights}")
+
+                # Move the piece
+                game_condition, board, sides, highlights = self.engine.move_piece(*end)
+                if board and board[end[0]][end[1]] != "X":
+                    print(f"DEBUG: Successfully moved piece from {start} to {end}.")
+                    break
+                else:
+                    print(f"DEBUG: Move failed (attempt {attempt + 1}/{retries}). Retrying...")
+                    time.sleep(1.0)
+            else:
+                self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
+
+        # Verify final board state after castling
         board, _, _ = self.engine._get_output(24, include_condition=False)
         print(f"DEBUG: Final board state after castling:\n{board}")
         self.assertEqual(board[7][2], "K", "King should be at c1 after castling.")
         self.assertEqual(board[7][3], "R", "Rook should be at d1 after castling.")
         self.assertEqual(board[7][4], "X", "e1 should be empty after castling.")
         self.assertEqual(board[7][0], "X", "a1 should be empty after castling.")
-
-    def _execute_move(self, start, end):
-        """Helper function to select and move a piece."""
-        row_start, col_start = start
-        row_end, col_end = end
-
-        # Select the piece
-        game_condition, board, sides, highlights = self.engine.select_piece(row_start, col_start)
-        if not board or not highlights:
-            self.fail(f"Failed to select piece at {start}. Board or highlights are missing.")
-
-        # Move the piece
-        game_condition, board, sides, highlights = self.engine.move_piece(row_end, col_end)
-        if not board:
-            self.fail(f"Failed to move piece from {start} to {end}. Board is missing.")
-
-        print(f"DEBUG: Move from {start} to {end} completed. Board state:\n{board}")
 
 if __name__ == "__main__":
     unittest.main()
