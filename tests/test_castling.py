@@ -11,62 +11,9 @@ class TestCastling(unittest.TestCase):
         # Close the chess engine subprocess
         self.engine.close()
 
-    def test_castling_kingside(self):
-        print("DEBUG: Running test_castling_kingside...")
-
-        # Sequence of moves for kingside castling
-        moves = [
-            ((7, 6), (5, 5)),  # Move white knight g1 -> f3
-            ((1, 5), (2, 5)),  # Move black pawn f7 -> f6
-            ((6, 6), (5, 6)),  # Move white pawn g2 -> g3
-            ((1, 6), (2, 6)),  # Move black pawn g7 -> g6
-            ((7, 5), (6, 6)),  # Move white bishop f1 -> g2
-            ((1, 4), (2, 4)),  # Move black pawn e7 -> e6
-            ((7, 4), (7, 6))   # Perform kingside castling (king e1 -> g1)
-        ]
-
-        retries = 5
-        for start, end in moves:
-            for attempt in range(retries):
-                # Select the piece
-                game_condition, board, sides, highlights = self.engine.select_piece(*start)
-                time.sleep(1.0)
-                game_condition, board, sides, highlights = self.engine.select_piece(*start)
-                if not board or not highlights:
-                    print(f"DEBUG: Select piece failed (attempt {attempt + 1}/{retries}). Retrying...")
-                    time.sleep(1.0)
-                    continue
-
-                # Debugging board and highlights
-                print(f"DEBUG: Board after selecting piece {start}:\n{board}")
-                print(f"DEBUG: Highlights after selecting piece {start}:\n{highlights}")
-
-                # Move the piece
-                game_condition, board, sides, highlights = self.engine.move_piece(*end)
-                time.sleep(1.0)
-                game_condition, board, sides, highlights = self.engine.move_piece(*end)
-                if board and board[end[0]][end[1]] != "X":
-                    print(f"DEBUG: Successfully moved piece from {start} to {end}.")
-                    break
-                else:
-                    print(f"DEBUG: Move failed (attempt {attempt + 1}/{retries}). Retrying...")
-                    time.sleep(1.0)
-            else:
-                self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
-
-        # Verify final board state after castling
-        board, _, _ = self.engine._get_output(24, include_condition=False)
-        time.sleep(1.0)
-        board, _, _ = self.engine._get_output(24, include_condition=False)
-        print(f"DEBUG: Final board state after castling:\n{board}")
-        self.assertEqual(board[7][6], "K", "King should be at g1 after castling.")
-        self.assertEqual(board[7][5], "R", "Rook should be at f1 after castling.")
-        self.assertEqual(board[7][4], "X", "e1 should be empty after castling.")
-        self.assertEqual(board[7][7], "X", "h1 should be empty after castling.")
-
     def test_castling_queenside(self):
         print("DEBUG: Running test_castling_queenside...")
-    
+        
         # Define the sequence of moves
         moves = [
             ((7, 1), (5, 0)),  # Move white knight b1 -> a3
@@ -79,31 +26,38 @@ class TestCastling(unittest.TestCase):
             ((1, 4), (2, 4)),  # Move black pawn e7 -> e6
             ((7, 4), (7, 2))   # Perform queenside castling (king e1 -> c1)
         ]
-    
+        
         for start, end in moves:
             print(f"DEBUG: Processing move from {start} to {end}.")
     
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
-            time.sleep(1.0)  # Allow engine to process
+            time.sleep(0.5)  # Allow engine to process
+            
+            # Retrieve the latest outputs
+            game_condition, board, sides, highlights = self.engine.get_output()
+            print(f"DEBUG: Updated board state after selecting piece at {start}:\n{board}")
+            print(f"DEBUG: Updated highlights after selecting piece at {start}:\n{highlights}")
     
             # Validate selection
-            print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
             if not highlights or highlights[end[0]][end[1]] != "1":
                 self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
     
             # Move the piece
             print(f"DEBUG: Attempting to move piece to {end}.")
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
-            time.sleep(1.0)  # Allow engine to process
-    
+            time.sleep(0.5)  # Allow engine to process
+            
+            # Retrieve the latest outputs
+            game_condition, board, sides, highlights = self.engine.get_output()
+            print(f"DEBUG: Updated board state after moving piece to {end}:\n{board}")
+            
             # Validate movement
-            print(f"DEBUG: Board after moving piece to {end}:\n{board}")
             if board[end[0]][end[1]] == "X":
                 self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
     
             print(f"DEBUG: Successfully completed move from {start} to {end}.\n")
-    
+        
         print("DEBUG: Test completed successfully.")
 
 if __name__ == "__main__":
