@@ -85,7 +85,7 @@ class TestCastling(unittest.TestCase):
     
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
-            time.sleep(0.5)  # Allow engine to process
+            time.sleep(1.0)  # Allow engine to process
             print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
     
             # Debug highlights format
