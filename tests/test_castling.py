@@ -30,8 +30,7 @@ class TestCastling(unittest.TestCase):
             print(f"DEBUG: Processing move from {start} to {end}.")
 
             # Select the piece
-            game_condition, board, sides, highlights = self.engine.select_piece(*start)
-            time.sleep(0.5)
+            time.sleep(1.0)
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
             print(f"DEBUG: Highlights after selecting piece at {start}:\n{highlights}")
 
