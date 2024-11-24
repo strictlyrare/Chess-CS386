@@ -31,6 +31,9 @@ class TestCastling(unittest.TestCase):
     
             # Select the piece
             game_condition, board, sides, highlights = self.engine.select_piece(*start)
+            time.sleep(1)
+            game_condition, board, sides, highlights = self.engine.select_piece(*start)
+            
             print(f"DEBUG: Raw highlights after selecting piece at {start}:\n{highlights}")
             
             # Validate selection
