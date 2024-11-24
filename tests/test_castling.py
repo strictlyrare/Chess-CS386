@@ -15,9 +15,9 @@ class TestCastling(unittest.TestCase):
         print("DEBUG: Running test_castling_queenside...")
 
         moves = [
-            ((7, 1), (5, 0)),  # Move white knight b1 -> a3
+            ((6, 3), (5, 3)),  # Move white knight b1 -> a3
             ((1, 1), (2, 1)),  # Move black pawn b7 -> b6
-            ((6, 3), (5, 3)),  # Move white pawn d2 -> d3
+            ((7, 1), (5, 0)),  # Move white pawn d2 -> d3
             ((1, 2), (2, 2)),  # Move black pawn c7 -> c6
             ((7, 2), (5, 4)),  # Move white bishop c1 -> e3
             ((1, 3), (2, 3)),  # Move black pawn d7 -> d6
