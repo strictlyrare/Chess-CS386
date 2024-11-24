@@ -45,7 +45,7 @@ class TestCastling(unittest.TestCase):
     
             # Move the piece
             game_condition, board, sides, highlights = self.engine.move_piece(*end)
-            time.sleep(2)
+            time.sleep(5)
             print(f"DEBUG: Board state after moving piece to {end}:\n{board}")
     
             # Validate movement
