@@ -50,9 +50,15 @@ class TestCastling(unittest.TestCase):
             print(f"DEBUG: Board state after moving piece to {end}:\n{board}")
     
             # Validate movement
-            if board[end[0]][end[1]] == "X":
-                print(f"DEBUG: Move to {end} failed, board state did not reflect the move.")
+            if board[end[0]][end[1]] != "G":  # Replace "G" with the expected piece type
+                print(f"DEBUG: Expected 'G' at {end}, but found: {board[end[0]][end[1]]}")
+                print(f"DEBUG: Full board after attempted move:\n{board}")
                 self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
+            
+            if board[start[0]][start[1]] != "X":  # Ensure the starting position is now empty
+                print(f"DEBUG: Expected 'X' at {start}, but found: {board[start[0]][start[1]]}")
+                print(f"DEBUG: Full board after attempted move:\n{board}")
+                self.fail(f"Failed to clear piece from {start}: board state did not reflect the move.")
     
             print(f"DEBUG: Successfully completed move from {start} to {end}.\n")
     
