@@ -30,33 +30,40 @@ class TestCastling(unittest.TestCase):
         for start, end in moves:
             print(f"DEBUG: Processing move from {start} to {end}.")
     
+            # Ensure input is sent as formatted strings (e.g., "7 1")
+            start_str = f"{start[0]} {start[1]}"
+            end_str = f"{end[0]} {end[1]}"
+    
             # Select the piece
-            game_condition, board, sides, highlights = self.engine.select_piece(*start)
+            print(f"DEBUG: Sending input to select piece at {start_str}.")
+            self.engine.process.stdin.write(f"{start_str}\n")
+            self.engine.process.stdin.flush()
             time.sleep(0.5)  # Allow engine to process
             
-            # Fetch the updated output after selection
+            # Fetch updated output after selection
             game_condition, board, sides, highlights = self.engine._get_output(24, include_condition=True)
-            print(f"DEBUG: Updated board state after selecting piece at {start}:\n{board}")
-            print(f"DEBUG: Updated highlights after selecting piece at {start}:\n{highlights}")
+            print(f"DEBUG: Board after selecting piece at {start_str}:\n{board}")
+            print(f"DEBUG: Highlights after selecting piece:\n{highlights}")
     
             # Validate selection
             if not highlights or highlights[end[0]][end[1]] != "1":
-                self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
+                self.fail(f"Failed to select piece at {start_str}: target {end_str} not in valid highlights.")
     
             # Move the piece
-            print(f"DEBUG: Attempting to move piece to {end}.")
-            game_condition, board, sides, highlights = self.engine.move_piece(*end)
+            print(f"DEBUG: Sending input to move piece to {end_str}.")
+            self.engine.process.stdin.write(f"{end_str}\n")
+            self.engine.process.stdin.flush()
             time.sleep(0.5)  # Allow engine to process
             
-            # Fetch the updated output after movement
+            # Fetch updated output after movement
             game_condition, board, sides, highlights = self.engine._get_output(24, include_condition=True)
-            print(f"DEBUG: Updated board state after moving piece to {end}:\n{board}")
-            
+            print(f"DEBUG: Board after moving piece to {end_str}:\n{board}")
+    
             # Validate movement
             if board[end[0]][end[1]] == "X":
-                self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
+                self.fail(f"Failed to move piece to {end_str}: board state did not reflect the move.")
     
-            print(f"DEBUG: Successfully completed move from {start} to {end}.\n")
+            print(f"DEBUG: Successfully completed move from {start_str} to {end_str}.\n")
         
         print("DEBUG: Test completed successfully.")
 
