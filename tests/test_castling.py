@@ -106,7 +106,7 @@ class TestCastling(unittest.TestCase):
                 self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
     
         # Validate final board state
-        game_condition, board, sides, highlights = self.engine._get_output(24, include_condition=False)
+        board, sides, highlights = self.engine._get_output(24, include_condition=False)
         print(f"DEBUG: Final board state after castling:\n{board}")
         expected_positions = {
             (7, 2): "K",  # King at c1
