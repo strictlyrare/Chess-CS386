@@ -44,7 +44,8 @@ class TestCastling(unittest.TestCase):
             board_rows = output_lines[:8]
             sides_rows = output_lines[8:16]
             highlights_rows = output_lines[16:24]
-    
+            print(f"DEBUG: Raw highlights_rows received from C:\n{highlights_rows}")
+
             board = [row.split() for row in board_rows]
             sides = [row.split() for row in sides_rows]
             highlights = [row.split() for row in highlights_rows]
