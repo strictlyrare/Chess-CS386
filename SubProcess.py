@@ -89,33 +89,39 @@ class ChessEngine:
 
     def select_piece(self, row, col):
         try:
-            # Send 'row col' instead of 'col row'
+            # Send 'row col' to the C program
             selection_input = f'{row} {col}\n'
-            print(f"Selecting piece at: {selection_input.strip()}")
+            print(f"DEBUG: Sending input to select piece at ({row}, {col}) -> '{selection_input.strip()}'")
             self.process.stdin.write(selection_input)
             self.process.stdin.flush()
-
-            # Expect gameCondition and one set of outputs: with highlights
+    
+            # Fetch gameCondition and board outputs
             game_condition, first_output = self._get_output(24, include_condition=True)
-
+    
+            # Check for incomplete board data
             if len(first_output) < 24:
-                print("Incomplete board data received after selection.")
+                print(f"ERROR: Incomplete board data received after selecting piece at ({row}, {col}).")
+                print(f"DEBUG: Received output: {first_output}")
                 return game_condition, None, None, None
-
-            # Use the first output which has highlights
+    
+            # Parse board, sides, and highlights
             board_rows = first_output[:8]
             sides_rows = first_output[8:16]
             highlights_rows = first_output[16:24]
-
+    
             board = [row.split() for row in board_rows]
             sides = [row.split() for row in sides_rows]
             highlights = [row.split() for row in highlights_rows]
-
+    
+            print(f"DEBUG: Successfully selected piece at ({row}, {col}).")
+            print(f"DEBUG: Board after selection:\n{board}")
+            print(f"DEBUG: Highlights after selection:\n{highlights}")
             return game_condition, board, sides, highlights
-
+    
         except Exception as e:
-            print(f"Error selecting piece: {e}")
+            print(f"ERROR: Exception while selecting piece at ({row}, {col}): {e}")
             return 0, None, None, None
+
 
     def move_piece(self, end_row, end_col):
         try:
