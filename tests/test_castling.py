@@ -15,70 +15,40 @@ class TestCastling(unittest.TestCase):
         print("DEBUG: Running test_castling_queenside...")
     
         moves = [
-            ((7, 1), (5, 0)),
-            ((1, 1), (2, 1)),
-            ((6, 3), (5, 3)),
-            ((1, 2), (2, 2)),
-            ((7, 2), (5, 4)),
-            ((1, 3), (2, 3)),
-            ((7, 3), (6, 3)),
-            ((1, 4), (2, 4)),
-            ((7, 4), (7, 2))
+            ((7, 1), (5, 0)),  # Move white knight b1 -> a3
+            ((1, 1), (2, 1)),  # Move black pawn b7 -> b6
+            ((6, 3), (5, 3)),  # Move white pawn d2 -> d3
+            ((1, 2), (2, 2)),  # Move black pawn c7 -> c6
+            ((7, 2), (5, 4)),  # Move white bishop c1 -> e3
+            ((1, 3), (2, 3)),  # Move black pawn d7 -> d6
+            ((7, 3), (6, 3)),  # Move white queen d1 -> d2
+            ((1, 4), (2, 4)),  # Move black pawn e7 -> e6
+            ((7, 4), (7, 2))   # Perform queenside castling (king e1 -> c1)
         ]
     
         for start, end in moves:
             print(f"DEBUG: Processing move from {start} to {end}.")
-            start_str = f"{start[0]} {start[1]}"
-            end_str = f"{end[0]} {end[1]}"
     
-            # Select the piece
-            print(f"DEBUG: Sending input to select piece at {start_str}.")
-            self.engine.process.stdin.write(f"{start_str}\n")
-            self.engine.process.stdin.flush()
-            time.sleep(0.5)
-    
-            # Fetch outputs after selection
-            game_condition, output_lines = self.engine._get_output(24, include_condition=True)
-    
-            # Parse board, sides, and highlights from `output_lines`
-            board_rows = output_lines[:8]
-            sides_rows = output_lines[8:16]
-            highlights_rows = output_lines[16:24]
-            print(f"DEBUG: Raw highlights_rows received from C:\n{highlights_rows}")
-
-            board = [row.split() for row in board_rows]
-            sides = [row.split() for row in sides_rows]
-            highlights = [row.split() for row in highlights_rows]
+            # Use select_piece method
+            print(f"DEBUG: Selecting piece at {start}.")
+            game_condition, board, sides, highlights = self.engine.select_piece(*start)
     
             # Validate selection
             if not highlights or highlights[end[0]][end[1]] != "1":
-                print(f"DEBUG: Highlights array dimensions: {len(highlights)}x{len(highlights[0]) if highlights else 0}")
-                print(f"DEBUG: Highlights array at failure point:\n{highlights}")
-                print(f"DEBUG: Expected value '1' at Highlights[{end[0]}][{end[1]}], but found: "
-                      f"'{highlights[end[0]][end[1]] if highlights else 'No highlights'}'.")
-                print(f"DEBUG: Raw highlights_rows received from C:\n{highlights_rows}")
-                self.fail(f"Failed to select piece at {start_str}: target {end_str} not in valid highlights.")
+                print(f"ERROR: Failed to select piece at {start}.")
+                print(f"DEBUG: Highlights array:\n{highlights}")
+                self.fail(f"Failed to select piece at {start}. Target move {end} not in highlights.")
     
-            # Move the piece
-            print(f"DEBUG: Attempting to move piece to {end}.")
-            self.engine.process.stdin.write(f"{end_str}\n")
-            self.engine.process.stdin.flush()
-            time.sleep(0.5)
+            # Use move_piece method
+            print(f"DEBUG: Moving piece to {end}.")
+            game_condition, board, sides, highlights = self.engine.move_piece(*end)
     
-            # Fetch outputs after movement
-            game_condition, output_lines = self.engine._get_output(24, include_condition=True)
-    
-            # Parse board, sides, and highlights again
-            board_rows = output_lines[:8]
-            sides_rows = output_lines[8:16]
-            highlights_rows = output_lines[16:24]
-    
-            board = [row.split() for row in board_rows]
-    
+            # Validate movement
             if board[end[0]][end[1]] == "X":
-                self.fail(f"Failed to move piece to {end_str}: board state did not reflect the move.")
+                print(f"ERROR: Piece not moved to {end}. Board state:\n{board}")
+                self.fail(f"Failed to move piece to {end}.")
     
-            print(f"DEBUG: Successfully completed move from {start_str} to {end_str}.\n")
+            print(f"DEBUG: Successfully moved piece from {start} to {end}. Board state:\n{board}")
     
         print("DEBUG: Test completed successfully.")
 
