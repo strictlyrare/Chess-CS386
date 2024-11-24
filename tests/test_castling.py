@@ -51,6 +51,8 @@ class TestCastling(unittest.TestCase):
     
             # Validate selection
             if not highlights or highlights[end[0]][end[1]] != "1":
+                print(f"DEBUG: highlights[{end[0]}][{end[1]}] = {highlights[end[0]][end[1]]} "
+                  f"(Expected '1'). Full highlights: {highlights}")
                 self.fail(f"Failed to select piece at {start_str}: target {end_str} not in valid highlights.")
     
             # Move the piece
