@@ -82,6 +82,7 @@ class TestCastling(unittest.TestCase):
             for attempt in range(retries):
                 # Select the piece
                 game_condition, board, sides, highlights = self.engine.select_piece(*start)
+                game_condition, board, sides, highlights = self.engine.select_piece(*start)
                 if not board or not highlights:
                     print(f"DEBUG: Select piece failed (attempt {attempt + 1}/{retries}). Retrying...")
                     time.sleep(1.0)
@@ -93,6 +94,7 @@ class TestCastling(unittest.TestCase):
 
                 # Move the piece
                 game_condition, board, sides, highlights = self.engine.move_piece(*end)
+                game_condition, board, sides, highlights = self.engine.move_piece(*end)
                 if board and board[end[0]][end[1]] != "X":
                     print(f"DEBUG: Successfully moved piece from {start} to {end}.")
                     break
@@ -103,6 +105,7 @@ class TestCastling(unittest.TestCase):
                 self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
 
         # Verify final board state after castling
+        board, _, _ = self.engine._get_output(24, include_condition=False)
         board, _, _ = self.engine._get_output(24, include_condition=False)
         print(f"DEBUG: Final board state after castling:\n{board}")
         self.assertEqual(board[7][2], "K", "King should be at c1 after castling.")
