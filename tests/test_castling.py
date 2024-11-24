@@ -5,7 +5,7 @@ from SubProcess import ChessEngine
 class TestCastling(unittest.TestCase):
     def setUp(self):
         # Initialize the chess engine subprocess
-        self.engine = ChessEngine("chess.exe")
+        self.engine = ChessEngine("./chess.exe")
 
     def tearDown(self):
         # Close the chess engine subprocess
