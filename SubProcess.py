@@ -127,7 +127,7 @@ class ChessEngine:
         try:
             # Send 'end_row end_col' instead of 'end_col end_row'
             move_input = f'{end_row} {end_col}\n'
-            print(f"Moving piece to ({end_row}, {end_col})")
+            print(f"DEBUG: Sending input to move piece to ({end_row}, {end_col}) -> '{move_input.strip()}'")
             self.process.stdin.write(move_input)
             self.process.stdin.flush()
 
