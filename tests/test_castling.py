@@ -80,52 +80,51 @@ class TestCastling(unittest.TestCase):
         ]
     
         for start, end in moves:
-            # Select the piece
             print(f"DEBUG: Attempting to select piece at {start}.")
-            for attempt in range(3):  # Max 3 retries for selection
-                game_condition, board, sides, highlights = self.engine.select_piece(*start)
-                time.sleep(0.5)  # Wait briefly for subprocess to update
-                game_condition, board, sides, highlights = self.engine.select_piece(*start)
     
-                if board and highlights:  # Ensure selection was successful
-                    print(f"DEBUG: Successfully selected piece at {start}.")
-                    break
-                else:
-                    print(f"ERROR: Failed to select piece at {start} (Attempt {attempt + 1}/3). Retrying...")
-                    time.sleep(1.0)
-            else:
-                self.fail(f"Failed to select piece at {start} after 3 attempts.")
+            # Select the piece
+            game_condition, board, sides, highlights = self.engine.select_piece(*start)
+            time.sleep(0.5)  # Wait briefly for subprocess updates
+            game_condition, board, sides, highlights = self.engine.select_piece(*start)
     
-            print(f"DEBUG: Board after selection:\n{board}")
-            print(f"DEBUG: Highlights after selection:\n{highlights}")
+            # Log outputs after selection
+            print(f"DEBUG: Board after selecting piece at {start}:\n{board}")
+            print(f"DEBUG: Highlights after selecting piece:\n{highlights}")
+            print(f"DEBUG: Game condition after selection: {game_condition}")
+    
+            # Validate selection success
+            if not board or not highlights:
+                self.fail(f"Failed to select piece at {start}: no valid highlights or board returned.")
+            elif end not in highlights:
+                self.fail(f"Failed to select piece at {start}: target {end} not in highlights.")
+    
+            print(f"DEBUG: Piece at {start} can move to {highlights}.")
     
             # Move the piece
-            print(f"DEBUG: Attempting to move piece to {end}.")
-            for attempt in range(3):  # Max 3 retries for movement
-                game_condition, board, sides, highlights = self.engine.move_piece(*end)
-                time.sleep(0.5)  # Wait briefly for subprocess to update
-                game_condition, board, sides, highlights = self.engine.move_piece(*end)
+            print(f"DEBUG: Attempting to move piece from {start} to {end}.")
+            game_condition, board, sides, highlights = self.engine.move_piece(*end)
+            time.sleep(0.5)  # Wait briefly for subprocess updates
+            game_condition, board, sides, highlights = self.engine.move_piece(*end)
     
-                if board and board[end[0]][end[1]] != "X":  # Ensure move was successful
-                    print(f"DEBUG: Successfully moved piece to {end}.")
-                    break
-                else:
-                    print(f"ERROR: Failed to move piece to {end} (Attempt {attempt + 1}/3). Retrying...")
-                    time.sleep(1.0)
-            else:
-                self.fail(f"Failed to move piece to {end} after 3 attempts.")
+            # Log outputs after movement
+            print(f"DEBUG: Board after move_piece to {end}:\n{board}")
+            print(f"DEBUG: Game condition after move: {game_condition}")
     
-            print(f"DEBUG: Board after move:\n{board}")
+            # Validate move success
+            if not board or board[end[0]][end[1]] == "X":
+                self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
     
-        # Final board validation after castling
+            print(f"DEBUG: Successfully moved piece from {start} to {end}.")
+    
+        # Final board verification
         print("DEBUG: Verifying final board state after castling...")
         board, _, _ = self.engine._get_output(24, include_condition=False)
-        time.sleep(0.5)  # Ensure we fetch the updated board state
+        time.sleep(0.5)  # Ensure board state is fully updated
         board, _, _ = self.engine._get_output(24, include_condition=False)
     
         print(f"DEBUG: Final board state:\n{board}")
     
-        # Assert final positions
+        # Assertions for final state
         self.assertEqual(board[7][2], "K", "King should be at c1 after castling.")
         self.assertEqual(board[7][3], "R", "Rook should be at d1 after castling.")
         self.assertEqual(board[7][4], "X", "e1 should be empty after castling.")
