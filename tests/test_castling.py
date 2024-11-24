@@ -41,7 +41,7 @@ class TestCastling(unittest.TestCase):
                 self.fail(f"Failed to select piece at {start}: target {end} not in valid highlights.")
 
             # Move the piece by selecting the destination square
-            game_condition, board, sides, highlights = self.engine.select_piece(*end)
+            game_condition, board, sides, highlights = self.engine.move_piece(*end)
             time.sleep(0.5)
             print(f"DEBUG: Board state after moving piece to {end}:")
 
