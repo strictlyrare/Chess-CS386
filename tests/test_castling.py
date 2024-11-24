@@ -79,45 +79,57 @@ class TestCastling(unittest.TestCase):
             ((7, 4), (7, 2))   # Perform queenside castling (king e1 -> c1)
         ]
     
-        retries = 5
         for start, end in moves:
-            for attempt in range(retries):
-                print(f"DEBUG: Attempting move from {start} to {end} (Attempt {attempt + 1}/{retries})")
-    
-                # Select the piece
+            # Select the piece
+            print(f"DEBUG: Attempting to select piece at {start}.")
+            for attempt in range(3):  # Max 3 retries for selection
                 game_condition, board, sides, highlights = self.engine.select_piece(*start)
-                print(f"DEBUG: Board after select_piece at {start}:\n{board}")
-                print(f"DEBUG: Highlights at {start}:\n{highlights}")
-                if not board or not highlights:
-                    print("ERROR: No board or highlights returned. Retrying...")
-                    time.sleep(1.0)
-                    continue
+                time.sleep(0.5)  # Wait briefly for subprocess to update
+                game_condition, board, sides, highlights = self.engine.select_piece(*start)
     
-                # Move the piece
-                game_condition, board, sides, highlights = self.engine.move_piece(*end)
-                print(f"DEBUG: Board after move_piece to {end}:\n{board}")
-                if board and board[end[0]][end[1]] != "X":
-                    print(f"DEBUG: Successfully moved piece from {start} to {end}.")
+                if board and highlights:  # Ensure selection was successful
+                    print(f"DEBUG: Successfully selected piece at {start}.")
                     break
                 else:
-                    print(f"ERROR: Move to {end} failed. Retrying...")
+                    print(f"ERROR: Failed to select piece at {start} (Attempt {attempt + 1}/3). Retrying...")
                     time.sleep(1.0)
             else:
-                self.fail(f"Failed to move piece from {start} to {end} after {retries} retries.")
+                self.fail(f"Failed to select piece at {start} after 3 attempts.")
     
-        # Validate final board state
-        board, sides, highlights = self.engine._get_output(24, include_condition=False)
-        print(f"DEBUG: Final board state after castling:\n{board}")
-        expected_positions = {
-            (7, 2): "K",  # King at c1
-            (7, 3): "R",  # Rook at d1
-            (7, 4): "X",  # e1 empty
-            (7, 0): "X"   # a1 empty
-        }
-        for position, expected_piece in expected_positions.items():
-            actual_piece = board[position[0]][position[1]]
-            self.assertEqual(actual_piece, expected_piece,
-                             f"Expected {expected_piece} at {position}, but found {actual_piece}")
+            print(f"DEBUG: Board after selection:\n{board}")
+            print(f"DEBUG: Highlights after selection:\n{highlights}")
+    
+            # Move the piece
+            print(f"DEBUG: Attempting to move piece to {end}.")
+            for attempt in range(3):  # Max 3 retries for movement
+                game_condition, board, sides, highlights = self.engine.move_piece(*end)
+                time.sleep(0.5)  # Wait briefly for subprocess to update
+                game_condition, board, sides, highlights = self.engine.move_piece(*end)
+    
+                if board and board[end[0]][end[1]] != "X":  # Ensure move was successful
+                    print(f"DEBUG: Successfully moved piece to {end}.")
+                    break
+                else:
+                    print(f"ERROR: Failed to move piece to {end} (Attempt {attempt + 1}/3). Retrying...")
+                    time.sleep(1.0)
+            else:
+                self.fail(f"Failed to move piece to {end} after 3 attempts.")
+    
+            print(f"DEBUG: Board after move:\n{board}")
+    
+        # Final board validation after castling
+        print("DEBUG: Verifying final board state after castling...")
+        board, _, _ = self.engine._get_output(24, include_condition=False)
+        time.sleep(0.5)  # Ensure we fetch the updated board state
+        board, _, _ = self.engine._get_output(24, include_condition=False)
+    
+        print(f"DEBUG: Final board state:\n{board}")
+    
+        # Assert final positions
+        self.assertEqual(board[7][2], "K", "King should be at c1 after castling.")
+        self.assertEqual(board[7][3], "R", "Rook should be at d1 after castling.")
+        self.assertEqual(board[7][4], "X", "e1 should be empty after castling.")
+        self.assertEqual(board[7][0], "X", "a1 should be empty after castling.")
 
 if __name__ == "__main__":
     unittest.main()
