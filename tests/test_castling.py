@@ -11,22 +11,6 @@ class TestCastling(unittest.TestCase):
         # Close the chess engine subprocess
         self.engine.close()
 
-# test_castling.py
-
-import unittest
-import time
-from SubProcess import ChessEngine  # Ensure this imports your updated SubProcess.py
-
-class TestCastling(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Initialize the chess engine with the path to your C executable
-        cls.engine = ChessEngine('path/to/your/c_executable')  # Replace with actual path
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.engine.close()
-
     def test_castling_queenside(self):
         print("DEBUG: Running test_castling_queenside...")
 
@@ -76,7 +60,4 @@ class TestCastling(unittest.TestCase):
 
 # To run the test
 if __name__ == '__main__':
-    unittest.main()
-
-if __name__ == "__main__":
     unittest.main()
