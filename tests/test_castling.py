@@ -49,7 +49,7 @@ class TestCastling(unittest.TestCase):
             print(f"DEBUG: Board state after moving piece to {end}:\n{board}")
     
             # Validate movement
-            if board[end[0]][end[1]].type == "X":
+            if board[end[0]][end[1]] == "X":
                 print(f"DEBUG: Move to {end} failed, board state did not reflect the move.")
                 self.fail(f"Failed to move piece to {end}: board state did not reflect the move.")
     
