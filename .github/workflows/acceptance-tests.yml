@@ -47,10 +47,6 @@ jobs:
           touch /tmp/.Xauthority
           echo "XAUTHORITY=/tmp/.Xauthority" >> $GITHUB_ENV
 
-      - name: Verify Xvfb is running
-        run: |
-          xrandr --display :99
-
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
