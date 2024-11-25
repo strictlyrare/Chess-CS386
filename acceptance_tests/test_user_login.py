@@ -7,12 +7,24 @@ class TestUserLogin(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Start the Pygame application as a subprocess
-        cls.process = subprocess.Popen(["python", "main.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Start the Pygame application as a subprocess and capture its output
+        cls.process = subprocess.Popen(
+            ["python", "main.py"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
         time.sleep(5)  # Wait for the application to start
 
     @classmethod
     def tearDownClass(cls):
+        # Capture any remaining output from the Pygame application
+        stdout, stderr = cls.process.communicate()
+        if stdout:
+            print("Application stdout:\n", stdout)
+        if stderr:
+            print("Application stderr:\n", stderr)
+
         # Terminate the Pygame subprocess
         cls.process.terminate()
         cls.process.wait()
