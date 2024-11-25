@@ -57,6 +57,9 @@ jobs:
           python Database_Creation.py
           python CreateDatabaseUserMysql.py
 
+      - name: Make chess.exe executable
+        run: chmod +x ./chess.exe
+
       - name: Run acceptance tests
         run: |
           python -m unittest discover -s acceptance_tests/ -p "*.py"
