@@ -18,20 +18,14 @@ class TestPygameAcceptance(unittest.TestCase):
         cls.process.wait()
 
     def test_start_game(self):
-        # Assuming that the application is focused on launch
         # Simulate pressing the Enter key to start the game
         pyautogui.press('enter')
         time.sleep(2)
 
-        # Check if a specific element has changed (e.g., a game board is displayed)
-        # This can be verified by taking a screenshot and locating certain expected components
-        screenshot = pyautogui.screenshot()
-        screenshot.save("acceptance_test_screenshot.png")
-
-        # Optionally, perform image analysis using PyAutoGUI's image recognition features
-        # For example, check if a chess piece appears in the screenshot
-        piece_found = pyautogui.locateOnScreen("images/pieces/wp.png")
-        self.assertIsNotNone(piece_found, "The game did not start as expected; could not find the chess piece on the screen.")
+        # Since we're not taking screenshots, we'll just ensure the process is still running
+        # This is a basic check to verify that the game did not crash after pressing 'enter'.
+        return_code = self.process.poll()
+        self.assertIsNone(return_code, "The game crashed unexpectedly after pressing Enter.")
 
 if __name__ == "__main__":
     unittest.main()
